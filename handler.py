@@ -52,10 +52,11 @@ def listen_shutdown():
             sg.popup(values[0])
             wd.close()
             break
-if __name__ == '__main__':            
-    l.start()
-    c.start()
-    s.start()
+if __name__ == '__main__':      
     l = threading.Thread(target=listen)
     c = threading.Thread(target=countdown)
     s = threading.Thread(target=listen_shutdown)
+    l.start()
+    c.start()
+    s.start()
+
