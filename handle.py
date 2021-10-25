@@ -34,7 +34,7 @@ def convert_to_bytes(file_or_bytes, resize=None, fill=False):
       
 
 sg.theme('DarkBlack')
-img = convert_to_bytes('handler.png', (100,100))
+img = convert_to_bytes('handle.png', (100,100))
 
 wd = sg.Window('handler',
                [[sg.Image(data=img), sg.Text('输入提醒事项',key='txt')],
