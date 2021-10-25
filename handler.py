@@ -55,15 +55,16 @@ def listen():
         event, values = wd.read()
         if event == sg.WIN_CLOSED or event == 'Cancel':
             flag = 0
-            sg.popup(values[0])
+            sg.popup(values[1])
             wd.close()
             break
         else:
-            if values[1]:
+            if values[2]:
                 min_num = np.random.randint(0,1440)
             else:
                 min_num = np.random.rayleigh(scale=30)
             wd['txt'].update('设定完毕')
+            print(values)
 
 
 def countdown():
@@ -81,7 +82,7 @@ def listen_shutdown():
         time.sleep(1)
         if count >= min_num * 60:
             flag = 0
-            sg.popup(values[0])
+            sg.popup(values[1])
             wd.close()
             break
 
@@ -91,4 +92,3 @@ s = threading.Thread(target=listen_shutdown)
 l.start()
 c.start()
 s.start()
-
