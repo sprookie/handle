@@ -1,5 +1,4 @@
 import PySimpleGUI as sg
-import pandas as pd
 import os
 import time
 import numpy as np
@@ -7,6 +6,8 @@ import threading
 import PIL
 import io
 from PIL import Image
+import winsound
+import time
 
 
 def convert_to_bytes(file_or_bytes, resize=None, fill=False):
@@ -31,17 +32,30 @@ def convert_to_bytes(file_or_bytes, resize=None, fill=False):
         img.save(bio, format="PNG")
         del img
         return bio.getvalue()
-      
 
-sg.theme('DarkBlack')
-img = convert_to_bytes('handle.png', (100,100))
 
-wd = sg.Window('handler',
-               [[sg.Image(data=img), sg.Text('输入提醒事项',key='txt')],
+img = convert_to_bytes('handle.png', (100,100), )
+
+wd = sg.Window('handle',
+               [[sg.Image(data=img), sg.Text('输入提醒事项', key='txt',
+                                             text_color='#7878AB',
+                                             font='Abel',
+                                             auto_size_text=True,
+                                             background_color='#F5F5FA')],
+
                 [sg.Input()],
-                [sg.Checkbox('豪放模式'), sg.Checkbox('人性模式')],
-                [sg.Btn('确认')],
-                [sg.Cancel()]]
+
+                [sg.Checkbox('豪放模式', font='Abel',
+                             text_color='#7878AB', background_color='#F5F5FA'),
+                 sg.Checkbox('人性模式', font='Abel', 
+                             text_color='#7878AB', background_color='#F5F5FA')],
+
+                [sg.Btn('', image_filename='./assets/image_3.png',
+                        button_color='#F5F5FA', image_subsample=3, border_width=0),
+                 sg.Btn('', image_filename='./assets/image_2.png',
+                        button_color='#F5F5FA', image_subsample=3, border_width=0)],
+                ],
+                background_color='#F5F5FA',
                )
 count = 0
 flag = 1
@@ -53,18 +67,19 @@ def listen():
         global values
         global min_num
         event, values = wd.read()
-        if event == sg.WIN_CLOSED or event == 'Cancel':
+        print(event)
+        if event == sg.WIN_CLOSED or event == '0':
             flag = 0
             sg.popup(values[1])
             wd.close()
             break
         else:
+            flag = 2
             if values[2]:
                 min_num = np.random.randint(0,1440)
             else:
                 min_num = np.random.rayleigh(scale=30)
             wd['txt'].update('设定完毕')
-            print(values)
 
 
 def countdown():
@@ -73,18 +88,33 @@ def countdown():
         time.sleep(1)
         count += 1
 
-        
+
+# def beep():
+#     for i in range(3):
+#         winsound.Beep(600, 800)
+#         time.sleep(0.6)
+
+
+def popup(value):
+    sg.popup(value)
+
+
 def listen_shutdown():
     while True:
         global count
-        global flag
         global min_num
+        global flag
         time.sleep(1)
-        if count >= min_num * 60:
-            flag = 0
+        if count >= 5 and flag == 2:
             sg.popup(values[1])
-            wd.close()
+#             b = threading.Thread(target=beep)
+#             p = threading.Thread(target=popup, args=[values[1]])
+#             b.start()
+#             p.start()
+            flag = 0
             break
+
+
 
 l = threading.Thread(target=listen)
 c = threading.Thread(target=countdown)
